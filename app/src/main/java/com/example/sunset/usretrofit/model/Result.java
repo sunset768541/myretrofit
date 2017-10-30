@@ -8,7 +8,7 @@ import java.util.Map;
 public class Result {
 
     private String stat;
-    private List<Datum> data = null;
+    private List<Detail> data = null;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     public String getStat() {
@@ -19,11 +19,11 @@ public class Result {
         this.stat = stat;
     }
 
-    public List<Datum> getData() {
+    public List<Detail> getData() {
         return data;
     }
 
-    public void setData(List<Datum> data) {
+    public void setData(List<Detail> data) {
         this.data = data;
     }
 

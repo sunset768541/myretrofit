@@ -3,27 +3,27 @@ package com.example.sunset.usretrofit;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.sunset.usretrofit.API.GItHubService;
-import com.example.sunset.usretrofit.API.gitapi;
-import com.example.sunset.usretrofit.model.Contributer;
-import com.example.sunset.usretrofit.model.Datum;
-import com.example.sunset.usretrofit.model.IpModel;
-import com.example.sunset.usretrofit.model.Repo;
-import com.example.sunset.usretrofit.model.gitmodel;
+import com.bumptech.glide.Glide;
+import com.example.sunset.usretrofit.API.NewsService;
+import com.example.sunset.usretrofit.model.Return;
+import com.example.sunset.usretrofit.model.Detail;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,68 +31,117 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
-
-    Button click;
-    TextView tv;
-    EditText edit_user;
-    ProgressBar pbar;
-    String API = "https://api.github.com";  // BASE URL
     String  type="top";
+    Spinner selectNewsType;
+    ListView news;
+    List<String> title;
+    ImageView imageView;
+    private String[] types = {"top","shehui","guonei","guoji","yule","tiyu","junshi","keji"};
+    ArrayAdapter<String> adapter;
+    SimpleAdapter simpleAdapter;
+    List<Map<String,Object>> data;
+    MyAdaptor myAdaptor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        click = (Button) findViewById(R.id.button);
-        tv = (TextView) findViewById(R.id.tv);
-        edit_user = (EditText) findViewById(R.id.edit);
-        pbar = (ProgressBar) findViewById(R.id.pb);
-        pbar.setVisibility(View.INVISIBLE);
-        click.setOnClickListener(new View.OnClickListener() {
+        title=new ArrayList<>();
+        selectNewsType=(Spinner)findViewById(R.id.spinner);
+        news=(ListView)findViewById(R.id.news);
+        data=new ArrayList<Map<String, Object>>();
+        HashMap map = new HashMap<String, Object>();
+        data.add(map);
+        myAdaptor=new MyAdaptor(this,data);
+        simpleAdapter = new SimpleAdapter(this,data,R.layout.list_raw,
+                new String[]{"title","author","img"},
+                new int[]{R.id.title,R.id.author,R.id.imageView2});
+        adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,title);
+        news.setAdapter(myAdaptor);
+        selectNewsType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View view) {
-                if(!edit_user.getText().toString().equals(""));
-                    type=edit_user.getText().toString();
-                getIpInformation("59.108.54.37");
-             //   Log.e("相应","哟2");
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String[] languages = getResources().getStringArray(R.array.news_type);
+                Toast.makeText(MainActivity.this, "选择新闻类型是:"+languages[i], Toast.LENGTH_LONG).show();
+                type=types[i];
+                getNews();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
             }
         });
+        getNews();
     }
 
-    private void getIpInformation(String ip) {
-        String url = "http://ip.taobao.com/service/";
+    private void getNews() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://v.juhe.cn/toutiao/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-       // Log.e("相应","哟3");
-        GItHubService service = retrofit.create(GItHubService.class);
-        Call<Contributer> repos = service.contributorsByAddConverterGetCall(type,"0320c04dd513482aabcf8a0aeed855eb");
-       // Log.e("相应","哟4");
-        repos.enqueue(new Callback<Contributer>() {
+        final NewsService service = retrofit.create(NewsService.class);
+        Call<Return> repos = service.requestNews(type,"0320c04dd513482aabcf8a0aeed855eb");//type 请求的是
+        repos.enqueue(new Callback<Return>() {
             @Override
-            public void onResponse(Call<Contributer> call, Response<Contributer> response) {
-            //    Log.e("相应",response.headers()+"哟");
+            public void onResponse(Call<Return> call, Response<Return> response) {
                 try {
-                //   Log.e("相应",response+"哟");
-                    Contributer contributorList = response.body();
-                    for (Datum contributor : contributorList.getResult().getData()){
-                        Log.e("title=", contributor.getTitle());
-                        Log.e("author=",contributor.getAuthorName() );
+                    Return contributorList = response.body();
+                    data.clear();
+                    Map<String, Object> map;
+                    for (Detail contributor : contributorList.getResult().getData()){
+                        map = new HashMap<String, Object>();
+                        map.put("img", contributor.getThumbnailPicS());
+                        map.put("title", contributor.getTitle());
+                        map.put("author", contributor.getAuthorName());
+                        data.add(map);
                     }
+                    myAdaptor.notifyDataSetChanged();
                 }
                 catch (Exception e) {
-                   Log.e("错误",e.toString());
+                   Log.e("错误",Log.getStackTraceString(e));
                 }
             }
 
             @Override
-            public void onFailure(Call<Contributer> call, Throwable t) {
+            public void onFailure(Call<Return> call, Throwable t) {
                 Log.e("相应错误",t.toString());
                 t.printStackTrace();
             }
         });
-      //  Log.e("相应","哟5");
+    }
+    private void getos() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://v.juhe.cn/toutiao/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        final NewsService service = retrofit.create(NewsService.class);
+        Call<Return> repos = service.requestNews(type,"0320c04dd513482aabcf8a0aeed855eb");//type 请求的是
+        repos.enqueue(new Callback<Return>() {
+            @Override
+            public void onResponse(Call<Return> call, Response<Return> response) {
+                try {
+                    Return contributorList = response.body();
+                    data.clear();
+                    Map<String, Object> map;
+                    for (Detail contributor : contributorList.getResult().getData()){
+                        map = new HashMap<String, Object>();
+                        map.put("img", contributor.getThumbnailPicS());
+                        map.put("title", contributor.getTitle());
+                        map.put("author", contributor.getAuthorName());
+                        data.add(map);
+                    }
+                    myAdaptor.notifyDataSetChanged();
+                }
+                catch (Exception e) {
+                    Log.e("错误",Log.getStackTraceString(e));
+                }
+            }
 
+            @Override
+            public void onFailure(Call<Return> call, Throwable t) {
+                Log.e("相应错误",t.toString());
+                t.printStackTrace();
+            }
+        });
     }
 }

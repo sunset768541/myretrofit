@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/send"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="重启服务器" />
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="状态:"
+        android:textSize="18sp"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/sta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="等待操作："
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/co"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="请求返回体"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/rebootlog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="重启错误日志" />
+</LinearLayout>

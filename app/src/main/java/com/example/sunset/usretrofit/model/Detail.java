@@ -4,7 +4,7 @@ package com.example.sunset.usretrofit.model;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Datum {
+public class Detail {
 
     private String uniquekey;
     private String title;
@@ -12,9 +12,9 @@ public class Datum {
     private String category;
     private String author_name;
     private String url;
-    private String thumbnailPicS;
-    private String thumbnailPicS02;
-    private String thumbnailPicS03;
+    private String thumbnail_pic_s;
+    private String thumbnail_pic_s02;
+    private String thumbnail_pic_s03;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     public String getUniquekey() {
@@ -66,27 +66,27 @@ public class Datum {
     }
 
     public String getThumbnailPicS() {
-        return thumbnailPicS;
+        return thumbnail_pic_s;
     }
 
     public void setThumbnailPicS(String thumbnailPicS) {
-        this.thumbnailPicS = thumbnailPicS;
+        this.thumbnail_pic_s = thumbnailPicS;
     }
 
-    public String getThumbnailPicS02() {
-        return thumbnailPicS02;
+    public String getThumbnail_pic_s02() {
+        return thumbnail_pic_s02;
     }
 
-    public void setThumbnailPicS02(String thumbnailPicS02) {
-        this.thumbnailPicS02 = thumbnailPicS02;
+    public void setThumbnail_pic_s02(String thumbnail_pic_s02) {
+        this.thumbnail_pic_s02 = thumbnail_pic_s02;
     }
 
     public String getThumbnailPicS03() {
-        return thumbnailPicS03;
+        return thumbnail_pic_s03;
     }
 
     public void setThumbnailPicS03(String thumbnailPicS03) {
-        this.thumbnailPicS03 = thumbnailPicS03;
+        this.thumbnail_pic_s03 = thumbnailPicS03;
     }
 
     public Map<String, Object> getAdditionalProperties() {

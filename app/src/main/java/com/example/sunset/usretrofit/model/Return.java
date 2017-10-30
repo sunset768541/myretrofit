@@ -7,7 +7,7 @@ import java.util.Map;
  * Created by sunset on 2017/3/10.
  */
 
-public class Contributer {
+public class Return {
     private String reason;
     private Result result;
     private Integer errorCode;
